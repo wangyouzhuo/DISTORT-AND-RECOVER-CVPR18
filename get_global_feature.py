@@ -12,8 +12,10 @@ from skimage import color
 import matplotlib.image as mpimg
 import multiprocessing as mtp
 import scipy.interpolate
+
+
 def get_tone_spatial_distribution(L, num_interval):
-    edges = np.linspace(0.0, 100.0, num_interval + 1)
+    edges = np.linspace(0.0, 100.0, num_interval + 1)  # 生成一个 0-100 的等差数列
     ftr = np.zeros((num_interval, 3), dtype=np.single)
     for i in range(num_interval):
         idx = np.nonzero((L >= edges[i]) & (L < edges[i + 1]))
@@ -27,14 +29,19 @@ def get_tone_spatial_distribution(L, num_interval):
             ftr[i, 1:3] = [cx, cy]            
         else:
             ftr[i, :] = 0
-
     return ftr.reshape((num_interval * 3))
+
+
+
 def get_highlight_clipping_value(L, percentage):
     h, w = L.shape[0], L.shape[1]
     rank = np.round(h * w * percentage)
     sorted_L = np.sort(L.flatten())
 #     print 'sorted_L',sorted_L[:10],sorted_L[-10:]
     return sorted_L[-rank]
+
+
+
 def get_BSpline_curve(x, y, num_control_points, t_min, t_max):
     p = 3  # degree is 3
     n = num_control_points - 1
@@ -43,6 +50,7 @@ def get_BSpline_curve(x, y, num_control_points, t_min, t_max):
     t = t[1:-1]
     spline = scipy.interpolate.LSQUnivariateSpline(x, y, t)
     return spline
+
 
 # get a B-spline for cumulative probability functioin of histogram
 def get_cum_hist_BSpline_curve(cumsum_hist, t_min, t_max, bins):
@@ -56,6 +64,8 @@ def get_cum_hist_BSpline_curve(cumsum_hist, t_min, t_max, bins):
     x = np.linspace(t_min + step * 0.5, t_max - step * 0.5, bins)
     spline = scipy.interpolate.LSQUnivariateSpline(x, cumsum_hist, t)
     return spline, x
+
+
 def get_lightness_equalization_curve_control_points(L):
     h, w = L.shape[0], L.shape[1]
     bins = 100
@@ -79,6 +89,8 @@ def get_lightness_detail_weighted_equalization_curve_control_points(L, sigma):
     cumsum_hist = np.cumsum(hist)
     spline, x = get_cum_hist_BSpline_curve(cumsum_hist, 0.0, 100.0, bins)
     return spline.get_coeffs()        
+
+
 def get_img_lightness_hist(L, range_min=0, range_max=100, bins=50):
     h, w = L.shape[0], L.shape[1]
     L1 = scipy.ndimage.filters.gaussian_filter(L, sigma=10, order=0)
@@ -91,6 +103,7 @@ def get_img_lightness_hist(L, range_min=0, range_max=100, bins=50):
     hist2, bin_edges2 = np.histogram(L2.flatten(), bins, range=(range_min, range_max), normed=False)
     hist2 = np.single(hist2) / np.single(h * w)    
     return np.concatenate((hist, hist1, hist2))
+
 
 def get_global_feature(np_img, log_luminance=1):
     Lab_img = color.rgb2lab(np_img+0.5)

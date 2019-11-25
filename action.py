@@ -172,7 +172,8 @@ def take_action(image_np, action_idx):
 		image_lab = color.rgb2lab(image_np+0.5)
 		image_lab = L_inv_sigmoid_high(image_lab, 4)
 		return_np = color.lab2rgb(image_lab)
-	# R
+
+	#  根据R通道 选择 高光 和 阴影 【 对R通道 使用 四种曲线 进行变换 】
 	elif action_idx==16:
 		image_rgb = image_np+0.5
 		return_np = R_sigmoid_low(image_rgb, 4)
@@ -185,7 +186,8 @@ def take_action(image_np, action_idx):
 	elif action_idx==19:
 		image_rgb = image_np+0.5
 		return_np = R_inv_sigmoid_high(image_rgb, 4)
-	# G
+
+	# 根据G通道 选择 高光 和 阴影 【 对G通道 使用 四种曲线 进行变换 】
 	elif action_idx==20:
 		image_rgb = image_np+0.5
 		return_np = G_sigmoid_low(image_rgb, 4)
@@ -198,7 +200,8 @@ def take_action(image_np, action_idx):
 	elif action_idx==23:
 		image_rgb = image_np+0.5
 		return_np = G_inv_sigmoid_high(image_rgb, 4)
-	# B
+
+	# 根据B通道 选择 高光 和 阴影 【 对B通道 使用 四种曲线 进行变换 】
 	elif action_idx==24:
 		image_rgb = image_np+0.5
 		return_np = B_sigmoid_low(image_rgb, 4)

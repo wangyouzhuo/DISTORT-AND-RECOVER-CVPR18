@@ -10,7 +10,7 @@ target_dir = '/data1/jcpark/Supervised_results/'
 dirs = glob.glob('./*/step_*')
 dirs = sorted(dirs)
 for test_dir in dirs:
-	print test_dir
+	print(test_dir)
 	target_dir_1 = os.path.join(target_dir, test_dir.split('/')[1])
 	if not os.path.exists(target_dir_1):
 		os.mkdir(target_dir_1)

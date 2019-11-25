@@ -1,4 +1,5 @@
 from non_linear import *
+import glob
 
 image_paths = glob.glob('./test2.jpg')
 

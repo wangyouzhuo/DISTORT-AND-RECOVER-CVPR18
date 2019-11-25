@@ -136,7 +136,7 @@ def take_action(image_np, action_idx):
 	# ------------------------------color temperature -----------------------------
 	# http://stackoverflow.com/questions/11884544/setting-color-temperature-for-a-given-image-like-in-photoshop
 	elif action_idx == 6:
-		r,g,b = 240, 240, 255 # around 6300K #convert_K_to_RGB(6000)   减弱 红 绿
+		r,g,b = 240, 240, 255 # around 6300K #convert_K_to_RGB(6000)   减弱 红 绿 , 保持蓝色通道不变
 		return_np = white_bal(image_np+0.5, r,g,b)
 	elif action_idx == 8:
 		r,g,b = 255, 240, 240  # around 6300K #convert_K_to_RGB(6000)  减弱 绿 蓝
@@ -154,7 +154,8 @@ def take_action(image_np, action_idx):
 	elif action_idx == 11:
 		r,g,b = 270, 255, 270 # around 6300K #convert_K_to_RGB(6000)   增强 红 蓝
 		return_np = white_bal(image_np+0.5, r,g,b)
-	# 根据L通道 选择 高光 和 阴影
+
+	# 根据L通道 选择 高光 和 阴影 【 对L通道 使用 四种曲线 进行变换 】
 	elif action_idx==12:
 		image_lab = color.rgb2lab(image_np+0.5)
 		image_lab = L_sigmoid_low(image_lab, 4)
@@ -211,5 +212,5 @@ def take_action(image_np, action_idx):
 		image_rgb = image_np+0.5
 		return_np = B_inv_sigmoid_high(image_rgb, 4)
 	else:
-		print "error"
+		print("error")
 	return return_np-0.5

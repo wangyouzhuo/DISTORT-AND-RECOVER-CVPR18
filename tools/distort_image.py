@@ -17,6 +17,7 @@ end_idx = args.end_idx
 dst_dir		= "/hdd2/jcpark/DATA/shutterstock/baseline_single"
 img_dir		= "/hdd2/jcpark/DATA/shutterstock/baseline_single/distorted_test"
 label_dir	= "/hdd2/jcpark/DATA/shutterstock/baseline_single/labels"
+
 if not os.path.exists(dst_dir):
 	os.mkdir(dst_dir)
 if not os.path.exists(img_dir):

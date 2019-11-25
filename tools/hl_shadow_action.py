@@ -22,11 +22,8 @@ def curve_sigmoid(x):
 	# sigmoid
 	x = x/100.0
 	width = 10
-
 	top = 1/(1+math.exp(-width*0.5))
 	bottom = 1/(1+math.exp(-width*(-0.5)))
-	
-
 	return (np.divide(1,(1+np.exp(-width*(x-0.5))))-bottom)/(top-bottom)
 
 def curve_inv_sig(x):
@@ -41,18 +38,20 @@ def curve_1(x):
 	right_curvature = 1.6
 	x = x/100.0
 	return np.clip(np.power((x/mid), left_curvature)*mid, 0, 0.5) + np.power(np.clip((x-mid)/(1-mid), 0, 1), right_curvature)*(1-mid)
+
+
 if True:
 	image_rgb = imread(image_paths[0]).astype('float')/255.0
 	image_lab = color.rgb2lab(image_rgb)
 	image_l = image_lab[:,:,0]
-	print image_l.max()
-	print image_l
+	print(image_l.max())
+	print(image_l)
 	#image_l_f = f(image_l)
 	#image_l_f = curve_sigmoid(image_l)
 	image_l_f = curve_inv_sig(image_l)
-	print image_l_f
+	print (image_l_f)
 	image_lab[:,:,0] = image_l_f*100.0
-	print image_lab[:,:,0]
+	print (image_lab[:,:,0])
 	image_rgb_f = color.lab2rgb(image_lab)*255.0
 	image_f = Image.fromarray(image_rgb_f.astype('uint8'), 'RGB')
 	image_f.save('./test_images/'+os.path.basename(image_paths[0])+"10_done.jpg")

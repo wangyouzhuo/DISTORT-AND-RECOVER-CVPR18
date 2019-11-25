@@ -11,12 +11,10 @@ def contrast(image_rgb, b, w=None):
 	degenerate = np.zeros(image_rgb.shape)+mean
 	if w is None:
 		w = np.ones(degenerate[:,:,0].shape)
-	
 	weighted_diff = (1-b) * ( degenerate - image_rgb )
 	weighted_diff[:,:,0] = weighted_diff[:,:,0] * w 
 	weighted_diff[:,:,1] = weighted_diff[:,:,1] * w 
-	weighted_diff[:,:,2] = weighted_diff[:,:,2] * w 
-
+	weighted_diff[:,:,2] = weighted_diff[:,:,2] * w
 	image_rgb = weighted_diff + image_rgb
 	image_rgb = np.clip(image_rgb,0,1)
 	return image_rgb
@@ -25,12 +23,10 @@ def brightness(image_rgb, b, w=None):
 	degenerate = np.zeros(image_rgb.shape)
 	if w is None:
 		w = np.ones(degenerate[:,:,0].shape)
-	
 	weighted_diff = (1-b) * ( degenerate - image_rgb )
 	weighted_diff[:,:,0] = weighted_diff[:,:,0] * w 
 	weighted_diff[:,:,1] = weighted_diff[:,:,1] * w 
-	weighted_diff[:,:,2] = weighted_diff[:,:,2] * w 
-	
+	weighted_diff[:,:,2] = weighted_diff[:,:,2] * w
 	image_rgb = weighted_diff + image_rgb
 	image_rgb = np.clip(image_rgb,0,1)
 	return image_rgb
@@ -154,5 +150,8 @@ def blue_adjust_blue(rgb, degree):
 	rgb[:,:,2] += weighted_diff
 	rgb = np.clip(rgb, 0, 1)
 	return rgb
+
+
+
 
 

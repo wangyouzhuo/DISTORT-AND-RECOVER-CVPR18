@@ -5,6 +5,8 @@ import skimage.color as color
 import math
 from PIL import Image
 import os
+
+
 def B_sigmoid_low(rgb, width):
 	l = rgb[:,:,2]
 	l_final = sigmoid_low(l,width)
@@ -120,6 +122,8 @@ def L_inv_sigmoid_high(lab, width):
 
 
 def sigmoid_low(in_channel, width):
+	# in_channel：输入的rgb通道其中之一，已经归一化在0～1之间
+	# width：默认为4
 	#l = lab[:,:,0]
 	#l=l/100.0
 
@@ -130,7 +134,7 @@ def sigmoid_low(in_channel, width):
 	in_channel = np.clip(in_channel, 0.000001, 0.999999)
 	"""
 	#in_final = np.log( np.divide( in_channel, (1-in_channel) ) ) / width + 0.625
-	in_final = (np.divide(1, (1+np.exp(-width*(in_channel-0.625))))-bottom)/(top-bottom)
+	in_final = (np.divide(1, (1+np.exp(-width*(in_channel-0.625))))-bottom) / (top-bottom)
 	#lab[:,:,0] = l_final*100.0
 	return in_final
 

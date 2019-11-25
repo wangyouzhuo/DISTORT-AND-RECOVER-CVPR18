@@ -27,7 +27,7 @@ if not os.path.exists(label_dir):
 raw_img_list = glob.glob("/hdd2/jcpark/DATA/shutterstock/cropped_resized/test/target/*.jpg")
 
 if not (end_idx > start_idx and start_idx < len(raw_img_list)):
-	print "index ain't right."
+	print("index ain't right.")
 	sys.exit(1)
 end_idx = min(end_idx, len(raw_img_list))
 
@@ -51,38 +51,44 @@ action_list = 	[
 
 
 def take_action(image_np, idx, degree):
-
 	return_np = action_list[idx](image_np+0.5, degree)
 	return return_np-0.5
+
 
 def distort_image(raw_image, image_path, lower_b, higher_b, distort_single=False, use_threshold=True):
 	basename = os.path.basename(img_path)
 	fn, ext = os.path.splitext(basename)
-
 	actions = []
 	# MULTIPLE 
 	# SINGLE
 	if distort_single:
+	#  just take the action once : len(actions) = 1
 		random_idx = random.randint(0, len(action_list)-1)
 		sign = (random.random()<0.5)*2-1
 		degree = random.uniform(0.1, 0.3)
 		actions.append((random_idx, 1+degree*sign))
 	else:
+	# take the action fo many times : len(actions) = len(ations_lists)
 		for i in range(len(action_list)):
+			# action_lists当中的动作有50%的概率被选中进入actions，同时action的degree由 1+degree*sign 确定
+			# action_degree = 1 + (0.1~0.2之间的均匀分布)*(1或者-1)
 			if random.random() > 0.5:#apply random distortion from 0.3~1.0
 				sign = (random.random()<0.5)*2-1
 				degree = random.uniform(0.1, 0.2)
 				actions.append((i, 1+degree*sign))
-
+	# 打乱actions
 	shuffle(actions)
 	image = raw_image.copy()
 	#action_str = ""
-	for action_pair in actions:
+
+	# 根据actions ， 对image采取actions，生成新的image
+	for action_pair in actions:  # action pair = action---degree
 		idx, degree = action_pair
 		image = take_action(image, idx, degree)
 		#action_str += "%d_%.2f_" % (idx, float(degree))
-	raw_image_lab = color.rgb2lab(raw_image+0.5)
-	image_lab = color.rgb2lab(image+0.5)
+
+	raw_image_lab = color.rgb2lab(raw_image+0.5) # 原图
+	image_lab     = color.rgb2lab(image+0.5)     # 人为改变后的图片
 	#mse = (( image_lab - raw_image_lab )**2).mean()/100
 	mse = np.sqrt(np.sum(( raw_image_lab - image_lab)**2, axis=2)).mean()/10.0
 
@@ -95,7 +101,7 @@ def distort_image(raw_image, image_path, lower_b, higher_b, distort_single=False
 		return image, True, mse, actions
 
 
-for i, img_path in enumerate(raw_img_list):
+for i,img_path in enumerate(raw_img_list):
 	if i%100 == 0:
 		print ("processed %d out of %d" %( i, len(raw_img_list) ))
 	try:

@@ -6,6 +6,7 @@ action_size = 12
 import math
 from action_set import *
 #from action_set_tf import *
+
 def PIL2array(img):
 	return np.array(img.getdata(), np.uint8).reshape(img.size[1], img.size[0], 3)
 
@@ -65,7 +66,7 @@ def convert_K_to_RGB(colour_temperature):
             blue = 255
         else:
             blue = tmp_blue
-    
+
     return red, green, blue
 
 """
@@ -112,41 +113,48 @@ def take_action(image_np, action_idx, sess):
 def take_action(image_np, action_idx):
 	#image_pil = Image.fromarray(np.uint8(image_np))
 	#image_pil = Image.fromarray(np.uint8((image_np+0.5)*255))
-	# enhance contrast
+
+	#-------------------------------enhance contrast-------------------------------
 	return_np = None
-	if action_idx == 0:
-		return_np = contrast(image_np+0.5, 0.95)
+	if   action_idx == 0:
+		return_np = contrast(image_np+0.5, 0.95) # 降对比
 	elif action_idx == 1:
-		return_np = contrast(image_np+0.5, 1.05)
-	# enhance color
+		return_np = contrast(image_np+0.5, 1.05) # 加对比
+
+	#--------------------------------enhance color---------------------------------
 	elif action_idx == 2:
-		return_np = color_saturation(image_np+0.5, 0.95)
+		return_np = color_saturation(image_np+0.5, 0.95) # 减饱和
 	elif action_idx == 3:
-		return_np = color_saturation(image_np+0.5, 1.05)
-	# color brightness
+		return_np = color_saturation(image_np+0.5, 1.05) # 增饱和
+
+	#-------------------------------color brightness-------------------------------
 	elif action_idx == 4:
-		return_np = brightness(image_np+0.5, 0.93)
+		return_np = brightness(image_np+0.5, 0.93) # 变暗
 	elif action_idx == 5:
-		return_np = brightness(image_np+0.5, 1.07)
-	# color temperature : http://stackoverflow.com/questions/11884544/setting-color-temperature-for-a-given-image-like-in-photoshop
+		return_np = brightness(image_np+0.5, 1.07) # 变亮
+
+	# ------------------------------color temperature -----------------------------
+	# http://stackoverflow.com/questions/11884544/setting-color-temperature-for-a-given-image-like-in-photoshop
 	elif action_idx == 6:
-		r,g,b = 240, 240, 255 # around 6300K #convert_K_to_RGB(6000)
-		return_np = white_bal(image_np+0.5, r,g,b)
-	elif action_idx == 7:
-		r,g,b = 270, 270, 255 # around 6300K #convert_K_to_RGB(6000)
+		r,g,b = 240, 240, 255 # around 6300K #convert_K_to_RGB(6000)   减弱 红 绿
 		return_np = white_bal(image_np+0.5, r,g,b)
 	elif action_idx == 8:
-		r,g,b = 255, 240, 240 # around 6300K #convert_K_to_RGB(6000)
+		r,g,b = 255, 240, 240  # around 6300K #convert_K_to_RGB(6000)  减弱 绿 蓝
+		return_np = white_bal(image_np + 0.5, r, g, b)
+	elif action_idx == 10:
+		r,g,b = 240, 255, 240  # around 6300K #convert_K_to_RGB(6000)  减弱 红 蓝
+		return_np = white_bal(image_np + 0.5, r, g, b)
+
+	elif action_idx == 7:
+		r,g,b = 270, 270, 255 # around 6300K #convert_K_to_RGB(6000)   增强 红 绿
 		return_np = white_bal(image_np+0.5, r,g,b)
 	elif action_idx == 9:
-		r,g,b = 255, 270, 270 # around 6300K #convert_K_to_RGB(6000)
-		return_np = white_bal(image_np+0.5, r,g,b)
-	elif action_idx == 10:
-		r,g,b = 240, 255, 240 # around 6300K #convert_K_to_RGB(6000)
+		r,g,b = 255, 270, 270 # around 6300K #convert_K_to_RGB(6000)   增强 绿 蓝
 		return_np = white_bal(image_np+0.5, r,g,b)
 	elif action_idx == 11:
-		r,g,b = 270, 255, 270 # around 6300K #convert_K_to_RGB(6000)
+		r,g,b = 270, 255, 270 # around 6300K #convert_K_to_RGB(6000)   增强 红 蓝
 		return_np = white_bal(image_np+0.5, r,g,b)
+	# 根据L通道 选择 高光 和 阴影
 	elif action_idx==12:
 		image_lab = color.rgb2lab(image_np+0.5)
 		image_lab = L_sigmoid_low(image_lab, 4)
@@ -163,6 +171,7 @@ def take_action(image_np, action_idx):
 		image_lab = color.rgb2lab(image_np+0.5)
 		image_lab = L_inv_sigmoid_high(image_lab, 4)
 		return_np = color.lab2rgb(image_lab)
+	# R
 	elif action_idx==16:
 		image_rgb = image_np+0.5
 		return_np = R_sigmoid_low(image_rgb, 4)
@@ -175,6 +184,7 @@ def take_action(image_np, action_idx):
 	elif action_idx==19:
 		image_rgb = image_np+0.5
 		return_np = R_inv_sigmoid_high(image_rgb, 4)
+	# G
 	elif action_idx==20:
 		image_rgb = image_np+0.5
 		return_np = G_sigmoid_low(image_rgb, 4)
@@ -187,6 +197,7 @@ def take_action(image_np, action_idx):
 	elif action_idx==23:
 		image_rgb = image_np+0.5
 		return_np = G_inv_sigmoid_high(image_rgb, 4)
+	# B
 	elif action_idx==24:
 		image_rgb = image_np+0.5
 		return_np = B_sigmoid_low(image_rgb, 4)

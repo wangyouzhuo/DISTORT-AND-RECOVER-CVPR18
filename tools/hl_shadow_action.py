@@ -17,6 +17,7 @@ f = np.vectorize(f)
 """
 def f(x):
 	return np.power((x/100.0), 0.8)*100
+
 def curve_sigmoid(x):
 	# sigmoid
 	x = x/100.0

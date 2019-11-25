@@ -5,6 +5,7 @@ import skimage.color as color
 import math
 from PIL import Image
 import os
+
 def B_sigmoid_low(rgb, width):
 	l = rgb[:,:,2]
 	l_final = sigmoid_low(l,width)

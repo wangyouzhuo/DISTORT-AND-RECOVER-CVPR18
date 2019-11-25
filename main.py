@@ -127,6 +127,7 @@ class Agent:
 		print (" [*] Saving checkpoints...")
 		model_name = type(self).__name__
 		self.saver.save(sess, "./checkpoints/"+self.prefix+".ckpt", global_step=step)
+
 	def load_model(self, model_path):
 		self.saver.restore(sess, model_path)
 		print (" [*] Load success: %s"%model_path)
@@ -149,12 +150,18 @@ class Agent:
 				self.test(idx=0)
 
 			self.q_learning_minibatch()
+
+			# 每隔 self.target_q_update_step 步，更新一次q_network
 			if self.step % self.target_q_update_step == self.target_q_update_step-1:
-				print "update"
+				print("update")
 				self.update_target_q_network()
 
+			# 每隔 self.save_interval 步，存一次模型参数
 			if self.step%self.save_interval == self.save_interval-1:
 				self.save_model(self.step+1)
+
+			#  每隔 self.test_step 步，进行一次测试
+			#  对 self.test_count 个测试样本进行遍历，对每个测试样本计算 init_score 和 final_score，并把这些scores存入文件中
 			if self.step%self.test_step == self.test_step-1:
 				init_scores		= []
 				final_scores	= []
@@ -209,12 +216,11 @@ class Agent:
 							self.action		: action, 
 							self.s_t		: state })
 		if self.logging:
-			print "q_t"
-			print q_t
-			print "delta"
-			print delta
-			print "terminal"
-			print terminal
+			print(q_t)
+			print(q_t)
+			print(delta)
+			print(terminal)
+			print(terminal)
 
 
 
@@ -260,18 +266,18 @@ class Agent:
 
 		with tf.variable_scope('optimizer'):
 			self.action_one_hot = tf.one_hot(self.action, self.action_size, 1.0, 0.0, name='action_one_hot')
-			print "self.q shape"
-			print self.q.get_shape().as_list()
-			print "self.action_one_hot  shape"
-			print self.action_one_hot.get_shape().as_list()
+			print(self.q shape)
+			print(self.q.get_shape().as_list())
+			print(self.action_one_hot  shape)
+			print(self.action_one_hot.get_shape().as_list())
 			q_acted				= tf.reduce_sum(self.q*self.action_one_hot, reduction_indices=1, name='q_acted')
-			print "q_acted shape"
-			print q_acted.get_shape().as_list()
-			print "target_q_t shape"
-			print self.target_q_t.get_shape().as_list()
+			print(q_acted shape)
+			print(q_acted.get_shape().as_list())
+			print(target_q_t shape"
+			print(self.target_q_t.get_shape().as_list()
 			self.delta			= self.target_q_t - q_acted
-			print "delta shape"
-			print self.delta.get_shape().as_list()
+			print(delta shape"
+			print(self.delta.get_shape().as_list()
 			self.clipped_delta	= tf.clip_by_value(self.delta, self.min_delta, self.max_delta, name='clipped_delta')
 			self.global_step	= tf.Variable(0, trainable=False)
 			self.loss			= tf.reduce_mean(tf.square(self.clipped_delta), name='loss') # square loss....
@@ -413,10 +419,15 @@ class Agent:
 		else:
 			state, score = self.get_state(state_raw, target_state_raw)
 		return state, state_raw, score, target_state_raw, op_str, fn, raw_images, history
+
 	def _load_images(self, offset, is_training,in_order=False,get_raw_images=False):
+		"""
+
+		"""
 		if is_training:
 			offset = random.randint(0, self.train_img_count-self.batch_size-1)
 			img_list = self.train_img_list[offset:offset+self.batch_size]
+			# img_list 是 用来训练的图像的序号
 		else:
 			"""
 			if not in_order:
@@ -450,7 +461,7 @@ class Agent:
 		if len(raw_imgs_raw)>0:
 			for raw in raw_imgs_raw:
 				if self.logging:
-					print raw.shape
+					print(raw.shape)
 			raw_imgs.append(raw_imgs_raw)
 		if len(raw_imgs_target)>0:
 			raw_imgs.append(raw_imgs_target)

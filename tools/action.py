@@ -9,7 +9,9 @@ import numpy as np
 	Actions: image constrast, color vividness(?), color temperature, brightness, edge enhancer(?)
 #PIL image temperature change : http://stackoverflow.com/questions/11884544/setting-color-temperature-for-a-given-image-like-in-photoshop
 http://www.vendian.org/mncharity/dir3/blackbody/
-#
+
+调整 对比 明暗 色温 对比
+
 """
 import time
 
@@ -50,14 +52,14 @@ def take_action(image_np, action_idx):
 		image_enh = enh.enhance(1.3)   # 变亮
 
 	# color temperature : http://stackoverflow.com/questions/11884544/setting-color-temperature-for-a-given-image-like-in-photoshop
-	# 色温
-	elif action_idx == 6:
+
+	elif action_idx == 6:  # 色温6000K
 		r,g,b = kelvin_table[0]
  		matrix = ( 	r / 255.0, 0.0, 0.0, 0.0,
                		0.0, g / 255.0, 0.0, 0.0,
                		0.0, 0.0, b / 255.0, 0.0 )
 		image_enh = image_pil.convert('RGB', matrix)  # 6000K
-	elif action_idx == 7:
+	elif action_idx == 7:  # 色温8000k
 		r,g,b = kelvin_table[1]
  		matrix = ( 	r / 255.0, 0.0, 0.0, 0.0,
                		0.0, g / 255.0, 0.0, 0.0,

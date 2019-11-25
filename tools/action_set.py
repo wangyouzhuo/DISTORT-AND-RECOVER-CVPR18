@@ -237,4 +237,23 @@ def white_bal(image_rgb, r,g,b):
 	image_rgb[:,:,2] = b/255.0 * image_rgb[:,:,2]
 	image_rgb = np.clip(image_rgb,0,1)
 	return image_rgb
+
+
+if __name__ == '__main__':
+
+	import matplotlib.pyplot as plt
+
+
+	func = [
+			sigmoid_low     , # 类似对比度曲线 +　暗部较暗
+			sigmoid_high    , # 类似对比度曲线 + 亮部较亮
+			inv_sigmoid_low , # 类似降对比曲线 + 暗部提的更亮
+			inv_sigmoid_high  # 类似降对比曲线 + 暗部提的没那么亮
+	][3]
+
+	x = [i/100.0 for i in range(100)]
+	y = [func(y,10) for y in x ]
+	plt.scatter(x, y)
+	plt.show()
+
 	
